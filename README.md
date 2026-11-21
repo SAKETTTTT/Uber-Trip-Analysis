@@ -1,79 +1,49 @@
 # Uber Trip Analysis
 
-## Overview
-This project analyzes Uber trip data to extract meaningful insights about ride patterns, purposes, and timing. The analysis includes data preprocessing, visualization, and feature engineering to understand various aspects of Uber rides.
+Exploratory analysis of 1,156 Uber trip records from 2016, plus two small models: a linear regression that predicts trip distance and a KMeans clustering of trips.
 
-## Dataset
-The dataset (`UberDataset.csv`) contains information about Uber trips with the following features:
-- START_DATE: Start time of the trip
-- END_DATE: End time of the trip
-- CATEGORY: Purpose category (Business/Personal)
-- START: Starting location
-- STOP: Destination location
-- MILES: Distance traveled in miles
-- PURPOSE: Specific purpose of the trip
+Everything is in one notebook, `UberData-2.ipynb`, with an explanation above each step and a summary at the bottom.
 
-## Features
-- Data cleaning and preprocessing
-- Handling missing values and duplicates
-- Date-time feature engineering
-- Categorical data encoding
-- Visualization of trip patterns
-- Analysis of trip purposes and categories
-- Day/Night pattern analysis
+## Data
 
-## Technologies Used
-- Python 3.x
-- Libraries:
-  - pandas: Data manipulation and analysis
-  - numpy: Numerical computations
-  - matplotlib: Data visualization
-  - seaborn: Statistical data visualization
-  - scikit-learn: Machine learning tools (for one-hot encoding)
+`UberDataset.csv` (included) has one row per trip:
 
-## Installation
-1. Clone this repository
+| Column | Meaning |
+|---|---|
+| `START_DATE`, `END_DATE` | When the trip started and ended |
+| `CATEGORY` | Business or Personal |
+| `START`, `STOP` | Start and end location |
+| `MILES` | Distance travelled |
+| `PURPOSE` | Why the trip was made (empty for about half the trips) |
+
+## What the notebook does
+
+1. **Clean:** fill empty purposes, parse the dates, add the hour of the day (Morning, Afternoon, Evening, Night), drop missing and duplicate rows.
+2. **Explore:** trips by category, time of day, purpose, month and weekday; distribution of distances; correlations.
+3. **Model:** linear regression (scikit-learn pipeline with one-hot encoding) predicting miles from trip duration and category.
+4. **Cluster:** KMeans with 3 clusters on standardized miles and duration.
+
+## Highlights
+
+- 1,154 trips remain after cleaning, covering all 12 months; 93% are Business trips.
+- Afternoon is the busiest time of day, Friday the busiest weekday and December the busiest month.
+- Half of all trips are 6 miles or shorter; 96.5% are under 40 miles.
+- Linear regression on duration and category: R² = 0.75.
+- KMeans splits trips into three groups: short trips (about 7 miles, 18 minutes), medium trips (about 38 miles, 80 minutes) and a few very long ones (about 174 miles, 188 minutes).
+
+## A note on the dates
+
+The CSV mixes two date styles (`01-01-2016 21:11` and `1/13/2016 13:54`). By default, pandas guesses the format from the first row and turns every row in the other style into a missing value, which then gets dropped without any warning. The notebook parses with `format='mixed'` so all trips are kept (this needs pandas 2.0 or newer).
+
+## Run it
+
 ```bash
 git clone https://github.com/SAKETTTTT/Uber-Trip-Analysis.git
+cd Uber-Trip-Analysis
+pip install -r requirements.txt
+jupyter notebook UberData-2.ipynb
 ```
-
-2. Install required packages
-```bash
-pip install pandas numpy matplotlib seaborn scikit-learn
-```
-
-## Usage
-1. Open `UberData-2.ipynb` in Jupyter Notebook or VS Code with Jupyter extension
-2. Ensure `UberDataset.csv` is in the same directory
-3. Run the cells sequentially to perform the analysis
-
-## Analysis Highlights
-- Trip categorization by purpose and business/personal use
-- Temporal analysis showing trip patterns across different times of day
-- Distance analysis for different trip purposes
-- Visualization of key patterns and trends
-
-## Visualizations
-The notebook includes several visualizations:
-- Distribution of trip categories
-- Day/Night pattern analysis
-- Purpose-wise trip distribution
-- Category-wise purpose analysis
-
-## Contributing
-1. Fork the repository
-2. Create a new branch for your feature
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
-## Author
-- [@SAKETTTTT](https://github.com/SAKETTTTT)
-
-## Acknowledgments
-- Data provided by Uber
-- Inspiration from various data analysis projects
-- Open source community for the amazing tools and libraries
+MIT, see [LICENSE](LICENSE).
